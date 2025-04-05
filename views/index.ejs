@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Livros</title>
+</head>
+<body>
+    <h1>Livros Disponíveis</h1>
+    <ul>
+        <% books.forEach(book => { %>
+            <li><strong><%= book.name %></strong> - <%= book.author %></li>
+        <% }); %>
+    </ul>
+
+    
+</body>
+</html>

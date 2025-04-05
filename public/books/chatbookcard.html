@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card do Livro</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            overflow-y: auto;
+            font-family: sans-serif;
+        }
+
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, max-content));
+            justify-content: center; /* <-- isso centraliza colunas quando há só uma */
+            gap: 20px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card {
+            width: 250px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            text-align: center;
+            flex: 0 0 auto;
+        }
+        .foto {
+            width: 100%;
+            height: 120px;
+            background: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .info {
+            text-align: left;
+            font-size: 14px;
+        }
+        .trocar {
+            margin-top: 10px;
+            padding: 5px 15px;
+            background: #ccc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .trocar:hover {
+            background: #bbb;
+        }
+
+        .popup-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .popup {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 20px;
+            box-shadow: 0px -2px 10px rgba(0, 0, 0, 0.2);
+            transition: bottom 0.3s ease-in-out;
+            z-index: 101;
+            display: none;
+        }
+        .popup.active {
+            display: block;
+        }
+        
+        .fechar {
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .mini-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+            max-width: 90%;
+        }
+        .mini-card {
+            width: 100px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .mini-card .foto {
+            width: 100%;
+            height: 60px;
+            background: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+        }
+        .mini-card .info {
+            font-size: 10px;
+            text-align: left;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+        .overlay.active {
+            display: block;
+        }
+        .confirmacao {
+            display: none;
+            position: fixed;
+            bottom: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            text-align: center;
+            transition: bottom 0.3s ease-in-out;
+            z-index: 101;
+        }
+        .confirmacao.active {
+            bottom: 50%;
+            display: block;
+        }
+        @media (min-width: 400px) {
+            .mini-cards {
+                .mini-cards {
+                    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                    max-width: 600px;
+                }
+            }
+        }
+
+        @media (min-width: 1000px) {
+            .mini-cards {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <div class="card">
+            <div class="foto">Foto do livro</div>
+            <div class="info">
+                <p>- Nome do livro:</p>
+                <p>- Autor:</p>
+                <p>- Editora:</p>
+                <p>- Volume (se for um box):</p>
+                <p>- Ano de lançamento:</p>
+            </div>
+            <button class="trocar" onclick="abrirPopup()">Trocar</button>
+        </div>
+    
+        <div class="card">
+            <div class="foto">Foto do livro</div>
+            <div class="info">
+                <p>- Nome do livro:</p>
+                <p>- Autor:</p>
+                <p>- Editora:</p>
+                <p>- Volume (se for um box):</p>
+                <p>- Ano de lançamento:</p>
+            </div>
+            <button class="trocar" onclick="abrirPopup()">Trocar</button>
+        </div>
+    
+        <div class="card">
+            <div class="foto">Foto do livro</div>
+            <div class="info">
+                <p>- Nome do livro:</p>
+                <p>- Autor:</p>
+                <p>- Editora:</p>
+                <p>- Volume (se for um box):</p>
+                <p>- Ano de lançamento:</p>
+            </div>
+            <button class="trocar" onclick="abrirPopup()">Trocar</button>
+        </div>
+    
+        <div class="card">
+            <div class="foto">Foto do livro</div>
+            <div class="info">
+                <p>- Nome do livro:</p>
+                <p>- Autor:</p>
+                <p>- Editora:</p>
+                <p>- Volume (se for um box):</p>
+                <p>- Ano de lançamento:</p>
+            </div>
+            <button class="trocar" onclick="abrirPopup()">Trocar</button>
+        </div>
+    
+        <div class="card">
+            <div class="foto">Foto do livro</div>
+            <div class="info">
+                <p>- Nome do livro:</p>
+                <p>- Autor:</p>
+                <p>- Editora:</p>
+                <p>- Volume (se for um box):</p>
+                <p>- Ano de lançamento:</p>
+            </div>
+            <button class="trocar" onclick="abrirPopup()">Trocar</button>
+        </div>
+    
+        <div class="card">
+            <div class="foto">Foto do livro</div>
+            <div class="info">
+                <p>- Nome do livro:</p>
+                <p>- Autor:</p>
+                <p>- Editora:</p>
+                <p>- Volume (se for um box):</p>
+                <p>- Ano de lançamento:</p>
+            </div>
+            <button class="trocar" onclick="abrirPopup()">Trocar</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="fecharPopup()"></div>
+
+    <div class="popup" id="popup">
+        <div class="popup-content" onclick="event.stopPropagation()">
+            <p>Escolha uma nova foto para o livro.</p>
+            <div class="mini-cards">
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 1</div>
+                    <div class="info">- Autor: X</div>
+                </div>
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 2</div>
+                    <div class="info">- Autor: Y</div>
+                </div>
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 3</div>
+                    <div class="info">- Autor: Z</div>
+                </div>
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 4</div>
+                    <div class="info">- Autor: W</div>
+                </div>
+            </div>
+        </div>
+        <button class="fechar" onclick="fecharPopup()">Fechar</button>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="fecharConfirmacao()"></div>
+    <div class="confirmacao" id="confirmacao">
+        <p>Tem certeza que deseja trocar este livro?</p>
+        <button onclick="fecharConfirmacao()">Confirmar</button>
+        <button onclick="fecharConfirmacao()">Cancelar</button>
+    </div>
+
+    <script>
+        function abrirPopup() {
+            document.getElementById("popup").classList.add("active");
+            document.getElementById("overlay").classList.add("active");
+        }
+        function fecharPopup() {
+            document.getElementById("popup").classList.remove("active");
+            document.getElementById("overlay").classList.remove("active");
+        }
+        // function abrirConfirmacao() {
+        //     document.getElementById("confirmacao").classList.add("active");
+        //     document.getElementById("overlay").classList.add("active");
+        // }
+        // function fecharConfirmacao() {
+        //     document.getElementById("confirmacao").classList.remove("active");
+        //     document.getElementById("overlay").classList.remove("active");
+        // }
+    </script>
+</body>
+</html>

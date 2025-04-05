@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card do Livro</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+        .card {
+            width: 250px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            text-align: center;
+        }
+        .foto {
+            width: 100%;
+            height: 120px;
+            background: #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .info {
+            text-align: left;
+            font-size: 14px;
+        }
+        .trocar {
+            margin-top: 10px;
+            padding: 5px 15px;
+            background: #ccc;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .trocar:hover {
+            background: #bbb;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="foto"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBw8PDxUPDxAWERAVEBAQEBAQEBAQFxUQFRYXFhUVFRUYHSggGBolGxUWITEhJSkrLi4uFx8zODMwNygtLisBCgoKDg0OGBAQGC0lICAtLSsuMTUtLSstLS0tLS0tLS0wLS0tLS0tMS0tLS0rLS0tKy0vLS0tLS0rLS0rKy0uK//AABEIAMUBAAMBIgACEQEDEQH/xAAcAAEAAgMBAQEAAAAAAAAAAAAAAQUCBAYHAwj/xABEEAABAwEFBQUEBwUGBwAAAAABAAIDEQQFEiFBBiIxUWETMkJxgQdSkaEUI4KSscHRFWJyovAkM0NTg+FEVGNzstLx/8QAGQEBAAMBAQAAAAAAAAAAAAAAAAECAwQF/8QAKhEBAQACAgECBQIHAAAAAAAAAAECAxExQRIhBBMyUcFh0RQiIzNxofD/2gAMAwEAAhEDEQA/APcUREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQERUm1O0cN3xY378jt2GFp3pH9OTRUVOnmQDFvCccbleInajaKG74sb6vkccMMLTvSP5DkMxU6V5kA0V07RXhID20cIc7NrYxJuDk4l1CqG77FPaJza7WcdqeN1vhgZoxg04/jxJJXY2KxtjHXUrj2b7z/ACuv5WOM47v/AHT6Qy2kZ9rUniHNbT4Dgthl4zDvRtd1a4t+RqoAWSym3OeUXXjfD6NvbnE8eWA/mshe7NWPH2P0K+SkBazfmpdeL7NvaHXEPON/6LZhtUcnceHdARX4LQwjkvnJZGOzpQ6EZEeR0V5vvmK3XFyip47VJDk+skfvcXN/9h8/NW0bw4BzTUEVBGYIXRjnMumVxsZIiKyBERAREQEREBERAREQEREBERAREQERUO1u00N3Q4378rqiGFp3nu/JoyqfxJAUW8LY43K8RltXtLDd0ON+/K6ohhad6R35NFRU/iSAeDu2wz2mc2u1nHaX91vhhZo1o0pX8eJJKwuywWi0zm2Ww47S/utpuxM0AGlK8PPiSSu2sNjEbeupXFu3c+0duOM1zid+b+Imw2NsbaDjqVtgIAslzoFICAKVaRFopQBZK0ioFICA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" alt=""></div>
+        <div class="info">
+            <p>- Nome do livro:</p>
+            <p>- Autor:</p>
+            <p>- Editora:</p>
+            <p>- Volume (se for um box):</p>
+            <p>- Ano de lançamento:</p>
+        </div>
+        <button class="trocar">Trocar</button>
+    </div>
+</body>
+</html>
