@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Envie um livro para realizar a troca</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #E5D2B4;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #5A6EB1;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        label {
+            margin-bottom: 6px;
+            display: block;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        input[type="file"]:focus {
+            border-color: #5A6EB1;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background-color: #5A6EB1;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #47589e;
+        }
+
+        div {
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Responsivo */
+        @media (max-width: 600px) {
+            .container {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Envie um livro</h1>
+
+        <!-- TODO: Precisa de uma api de livros para facilitar o preenchimento dos formulários -->
+        <form action="/books/send" method="post" enctype="multipart/form-data">
+            <div>
+                <label for="bookName">Nome do livro:</label>
+                <input type="text" name="bookName" id="bookName" placeholder="A Revolução dos Bichos" required>
+            </div>
+
+            <div>
+                <label for="bookAuthor">Autor do livro:</label>
+                <input type="text" name="author" id="bookAuthor" placeholder="George Orwell" required>
+            </div>
+
+            <div>
+                <label for="bookPublisher">Editora:</label>
+                <input type="text" name="publisher" id="bookPublisher" placeholder="Editora">
+            </div>
+
+            <div>
+                <label for="bookVolume">Volume:</label>
+                <input type="number" name="volume" id="bookVolume" placeholder="1">
+            </div>
+
+            <div>
+                <label for="bookYear">Ano de lançamento:</label>
+                <input type="number" name="year" id="bookYear" placeholder="1945" max="9999">
+            </div>
+
+            <div>
+                <label for="bookPhoto">Capa do livro:</label>
+                <input type="file" id="bookPhoto" name="photo" accept=".jpg, .jpeg, .png, .gif" required>
+            </div>
+
+            <input type="submit" value="Enviar livro">
+        </form>
+    </div>
+
+    <script>
+        const bookYear = document.getElementById("bookYear");
+        bookYear.max = new Date().getFullYear();
+    </script>
+</body>
+</html>
