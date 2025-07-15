@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Book Trade</title>
+    <style>
+        body {
+            background-color: #E5D2B4;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .register-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 450px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form div {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #999;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .login-link a {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="register-container">
+        <h1>Cadastro</h1>
+        {{if .Errors}}
+            <ul style="color: red;">
+                {{range .Errors}}
+                    <li>{{.}}</li>
+                {{end}}
+            </ul>
+        {{end}}
+        <form action="/user/register" method="post">
+            <div>
+                <label for="name">Nome:</label>
+                <input type="text" name="name" id="name" placeholder="Seu nome completo" required>
+            </div>
+
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" name="email" id="email" placeholder="seuemail@email.com" required>
+            </div>
+
+            <div>
+                <label for="password">Senha:</label>
+                <input type="password" name="password" id="password" placeholder="Crie uma senha" required>
+            </div>
+
+            <div>
+                <label for="confirmPassword">Confirme sua senha:</label>
+                <input type="password" name="confirmPassword" id="confirmPassword" placeholder="Repita a senha" required>
+            </div>
+
+            <input type="submit" value="Cadastrar">
+        </form>
+
+        <div class="login-link">
+            <p>Já tem uma conta? <a href="/user/login">Entrar</a></p>
+        </div>
+    </div>
+
+</body>
+</html>

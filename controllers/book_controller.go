@@ -1,4 +1,5 @@
 package controllers
+
 //! Esse arquivo esta muito grande, refatorar ele da melhor maneira possível
 import (
 	"book-trade/models"
@@ -133,3 +134,4 @@ func parseBookForm(r *http.Request, imgurUrl string) models.Book {
 		ImageUrl: imgurUrl,
 	}
 }
+

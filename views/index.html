@@ -295,15 +295,23 @@
     <ul>
       <li><a href="">Início</a></li>
       <li><a href="/books/add">Envie um livro</a></li>
-      <li><a href="#">Serviços</a></li>
-      <li><a href="#">Contato</a></li>
+      
+
+        {{if .loggedUser}}
+            <form id="logout-form" action="/user/logout" method="POST" style="display: none;"></form>
+            <li><a href="#" onclick="document.getElementById('logout-form').submit()">Logout</a></li>
+        {{else}}
+            <li><a href="/user/login">Login</a></li>
+            <li><a href="/user/register">Cadastro</a></li>
+        {{end}}
+      <!-- <li><a href="#">Contato</a></li> -->
     </ul>
   </nav>
 
 
     <div id="books-section">
         <div class="card-container">
-            {{range .}}
+            {{range .books}}
                 <div class="card">
                     <div class="foto">
                         <img class="book-photo" src="{{.ImageUrl}}" alt="" srcset="">

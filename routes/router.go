@@ -6,7 +6,8 @@ import (
 
 func LoadRoutes() chi.Router {
     router := chi.NewRouter()
-    BookRoutes(router);
+    BookRoutes(router)
+    UserRoutes(router)
 
     return router
 }

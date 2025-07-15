@@ -13,10 +13,12 @@ type Book struct {
 	Author string
 	Publisher sql.NullString // acho melhor trocar para string vazia, aí no front vou ter que validar tambem
 	Volume sql.NullInt64
-	Year sql.NullInt64	
+	Year sql.NullInt64
 	ImageUrl string
 }
 
+
+// TODO: essas funcoes devem ir para o repositório
 func GetAll() ([]Book, error) {
 	rows, err := config.DB.Query("SELECT * FROM books");
 	if err != nil {
