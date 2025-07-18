@@ -128,3 +128,15 @@ func Login(email string, password string) (int, error) {
 
 	return int(user.Id), nil
 }
+
+func GetUsername(userId int) (string, error) {
+	var username string
+	query := `SELECT name FROM users WHERE id = $1`
+	err := config.DB.QueryRow(query, userId).Scan(&username)
+	if err != nil {
+		return "", err
+	}
+
+	return username, nil
+}
+

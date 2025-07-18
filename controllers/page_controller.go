@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"book-trade/middleware"
+	"book-trade/repositories"
 	"encoding/json"
 	"html/template"
+	"log"
 	"net/http"
 	"net/url"
-	"strconv"
 )
 
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -16,24 +17,57 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var loggedUser string
+	var username string
 	user, err := middleware.GetUserFromToken(r)
-	if err != nil {
-		loggedUser = ""
+	if err == nil {
+		username, _ = repositories.GetUsername(user.UserID)	
 	} else {
-		loggedUser = strconv.Itoa(user.UserID)
+		username = "Convidado"
 	}
 
 	data := map[string]interface{}{
 		"books": books,
-		"loggedUser": loggedUser,
+		"isAuthenticated": username != "Convidado",
+		"loggedUser": username,
 	}
 	
 	render(w, "views/index.html", data)
 }
 
 func AddBookPage(w http.ResponseWriter, r *http.Request) {
-	render(w, "views/sendUserBook.html", nil)
+	var username string
+	user, err := middleware.GetUserFromToken(r)
+	if err == nil {
+		username, _ = repositories.GetUsername(user.UserID)	
+	} else {
+		username = "Convidado"
+	}
+
+	data := map[string]interface{}{
+		"isAuthenticated": username != "Convidado",
+		"loggedUser": username,
+	}
+
+	render(w, "views/sendUserBook.html", data)
+}
+
+func UserBooksPage(w http.ResponseWriter, r *http.Request) {
+	user, _ := middleware.GetUserFromToken(r)
+
+	userBooks := GetUserBooks(user.UserID)
+	username, err := repositories.GetUsername(user.UserID)
+	if err != nil {
+		log.Println("Erro ao buscar os livros do usuário ", err)
+		return
+	}
+
+	data := map[string]interface{}{
+		"userBooks": userBooks,
+		"isAuthenticated": username != "Convidado",
+		"loggedUser": username,
+	}
+
+	render(w, "views/userBooks.html", data)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -59,8 +93,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	// TODO: Na verdade aqui vai ter um valor que seria m erro, se senha e/ou usuario/email estiver errado ele nao deixa entrar e reotrna um erro no lugar do nil
-	cookie, err := r.Cookie("flash")
+ 	cookie, err := r.Cookie("flash")
 	var errorMessages []string
 	if err == nil {
 		decodedValue, _ := url.QueryUnescape(cookie.Value)
