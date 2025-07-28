@@ -1,17 +1,19 @@
 package controllers
 
-//! Esse arquivo esta muito grande, refatorar ele da melhor maneira possível
 import (
+	"book-trade/middleware"
 	"book-trade/models"
+	"book-trade/repositories"
+	"book-trade/services"
+	"book-trade/utils"
 	"database/sql"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
 	"strings"
-	"book-trade/services"
-	"book-trade/utils"
 )
 
 type BookView struct {
@@ -39,7 +41,8 @@ func convertBookToView(book models.Book) BookView {
 }
 
 func GetBooks(w http.ResponseWriter, r *http.Request) ([]BookView, error) {
-    books, err := models.GetAll()
+    books, err := repositories.GetAll()
+	
 	if err != nil {
 		return nil, fmt.Errorf("erro ao buscar os livros %v", http.StatusInternalServerError)
 	}
@@ -74,13 +77,14 @@ func SendBook(w http.ResponseWriter, r *http.Request) {
 	}
 
 	base64Image := base64.StdEncoding.EncodeToString(fileBytes)
-	imgurUrl, err := services.UploadToImgur(base64Image)
+	deletehash, imgurUrl, err := services.UploadToImgur(base64Image)
 	if err != nil {
 		fmt.Println("erro na chamada da funcao para enviar para a API: ", err)
 	}
 
 	bookModel := parseBookForm(r, imgurUrl)
-	models.AddBook(bookModel)
+	bookModel.DeleteHash = deletehash
+	repositories.AddBook(bookModel)
 
 	http.Redirect(w, r, "/books/add", http.StatusSeeOther)
 }
@@ -123,6 +127,7 @@ func parseBookForm(r *http.Request, imgurUrl string) models.Book {
 		}
 	}
 
+	user, _ := middleware.GetUserFromToken(r)
 
 	return models.Book{
 		Id: 0,
@@ -132,6 +137,79 @@ func parseBookForm(r *http.Request, imgurUrl string) models.Book {
 		Volume: volume,
 		Year: year,
 		ImageUrl: imgurUrl,
+		UserId: int64(user.UserID),
 	}
+}
+
+func GetUserBooks(userId int) []BookView {
+	
+	books, _ := repositories.GetBooksByUserId(userId)
+
+	var booksView []BookView
+	for _, book := range books{
+		booksView = append(booksView, convertBookToView(book))
+	}
+
+	return booksView
+}
+
+func DeleteBook(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Id json.Number `json:"id"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&input)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "JSON inválido"})
+		return
+	}
+
+	idInt, err := input.Id.Int64()
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "JSON inválido"})
+		return
+	}
+
+	deleteHash, err := repositories.GetImageDeleteHash(idInt)
+	if err != nil {
+		http.Error(w, `{"error":"Erro ao buscar imagem"}`, http.StatusInternalServerError)
+		fmt.Println(err)
+		return
+	}
+
+	if deleteHash != "" {
+		err := services.DeleteFromImgur(deleteHash);
+		if err != nil {
+			http.Error(w, `{"error":"Erro ao deletar imagem do Imgur"}`, http.StatusInternalServerError)
+			return
+		}
+	}
+
+	user, err := middleware.GetUserFromToken(r)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Dados inválidos"})
+		return
+	}
+
+	userHasBook, err := repositories.UserHasThisBook(idInt, user.UserID)
+	if err != nil {
+		json.NewEncoder(w).Encode(map[string]string{"error": "Erro ao deletar livro"})
+		return
+	}
+
+	if userHasBook {
+		err := repositories.DeleteUserBook(idInt)
+		// Service de apagar vai aqui!
+		if err != nil {
+			json.NewEncoder(w).Encode(map[string]string{"error": "Erro ao deletar livro"})
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "E, tal como Ícaro, ele voou alto demais e... deletou-se."})
 }
 

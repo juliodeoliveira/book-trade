@@ -50,13 +50,13 @@
         .trocar {
             margin-top: 10px;
             padding: 5px 15px;
-            background: #ccc;
+            background: #df9797;
             border: none;
             border-radius: 5px;
             cursor: pointer;
         }
         .trocar:hover {
-            background: #bbb;
+            background: #b87d7d;
         }
 
         .popup-content {
@@ -189,7 +189,7 @@
             display: flex;
             justify-content: center; /* Centraliza na vertical */
             width: 100vw;
-            height: 300px; 
+            height: 70px; 
         }
 
         .big-logo > img {
@@ -265,6 +265,10 @@
             transition: color 0.3s ease;
         }
 
+        ul li a.actual-page {
+            color: #ff9800;
+        }
+
         .sidebar ul li a:hover {
             color: #ff9800;
         }
@@ -280,38 +284,36 @@
             margin-right: 30px;
         }
 
-        ul li a.actual-page {
-            color: #ff9800;
+        .warning {
+            background-color: #d9ff008e;
+            padding: 5px;
         }
-
     </style>
 </head>
 <body>
     <div class="big-logo">
-        <img src="http://192.168.3.15:8080/static/no-background.png" >
+        <!-- <img src="http://192.168.3.15:8080/static/no-background.png" > -->
+         <h1>Meus livros</h1>
     </div>
 
-
-
-  <!-- Ícone do menu hambúrguer fixo -->
-  <div id="menu-btn" class="menu-btn">
+    <!-- Ícone do menu hambúrguer fixo -->
+    <div id="menu-btn" class="menu-btn">
     <div class="bar"></div>
     <div class="bar"></div>
     <div class="bar"></div>
-  </div>
+    </div>
 
-  <!-- Menu lateral (sidebar) -->
-   <!-- TODO: aqui o menu tem que fechar quando clicar fora dele -->
-  <nav id="sidebar" class="sidebar">
+    <!-- Menu lateral (sidebar) -->
+    <nav id="sidebar" class="sidebar">
     <ul>
         <p class="logged-user">User: {{.loggedUser}}</p>
-      <li><a class="actual-page" href="">Início</a></li>
-      
-      <!-- TODO: Adicionar aqui o nome do usuário que está logado -->
-
+        <li><a href="/">Início</a></li>
+        
+        
+    <!-- TODO: mover cada componente para um arquivo -->
         {{if .isAuthenticated}}
             <form id="logout-form" action="/user/logout" method="POST" style="display: none;"></form>
-            <li><a href="/books/my-books">Meus livros</a></li>
+            <li><a class="actual-page" href="">Meus livros</a></li>
             <li><a href="/books/add">Envie um livro</a></li>
             <li><a href="#" onclick="document.getElementById('logout-form').submit()">Logout</a></li>
         {{else}}
@@ -319,60 +321,63 @@
             <li><a href="/user/register">Cadastro</a></li>
         {{end}}
     </ul>
-  </nav>
+    </nav>
 
 
     <div id="books-section">
         <div class="card-container">
-            {{range .books}}
+            {{if not .userBooks}}
+                <div>
+                    <p class="warning">Você ainda não cadastrou nenhum livro</p>
+                </div>
+            {{end}}
+            {{range .userBooks}}
                 <div class="card">
+                    <section id="book" data-id="{{.Id}}" hidden></section>
                     <div class="foto">
                         <img class="book-photo" src="{{.ImageUrl}}" alt="" srcset="">
                     </div>
                     <div class="info">
                         <p title="Nome do livro">&#x1F4D8; - Nome do livro: {{.Name}}</p>
                         <p title="Autor do livro">&#x1F4D5; - Autor: {{.Author}}</p>
-
                         <p title="Editora">&#x1F4D7; - Editora: {{.Publisher}}</p>
                         <p title="Volume do livro">&#x1F4D9; - Volume (se for um box): {{.Volume}}</p>
                         <p title="Ano de lançamento">&#x1F4D3; - Ano de lançamento: {{.Year}}</p>
                     </div>
-                    <button class="trocar" onclick="abrirPopup()">Trocar</button>
+                    <button class="trocar" onclick="deleteBook({{.Id}})">Deletar</button>
                 </div>
             {{end}}
             <!-- <img src="https://i.imgur.com/wZCr3fC.jpeg" alt="gato safado achando que é empresário"> -->
         </div>
     </div>
 
-    <div class="overlay" id="overlay" onclick="fecharPopup()"></div>
+    <!-- <div class="overlay" id="overlay" onclick="fecharPopup()"></div> -->
 
     <div class="popup" id="popup">
 
         <!-- Aqui vai pegar os livros que a pessoa tem -->
-        <div class="popup-content" onclick="event.stopPropagation()">
-            {{if .isAuthenticated}}
-                <p>Escolha uma nova foto para o livro.</p>
-                <div class="mini-cards">
-                    <div class="mini-card" onclick="abrirConfirmacao()">
-                        <div class="foto">Livro 1</div>
-                        <div class="info">- Autor: X</div>
-                    </div>
-                    <div class="mini-card" onclick="abrirConfirmacao()">
-                        <div class="foto">Livro 2</div>
-                        <div class="info">- Autor: Y</div>
-                    </div>
-                    <div class="mini-card" onclick="abrirConfirmacao()">
-                        <div class="foto">Livro 3</div>
-                        <div class="info">- Autor: Z</div>
-                    </div>
-                    <div class="mini-card" onclick="abrirConfirmacao()">
-                        <div class="foto">Livro 4</div>
-                        <div class="info">- Autor: W</div>
-                    </div>
+        <!-- <div class="popup-content" onclick="event.stopPropagation()">
+            <p>Escolha uma nova foto para o livro.</p>
+            <div class="mini-cards">
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 1</div>
+                    <div class="info">- Autor: X</div>
                 </div>
-            {{end}}
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 2</div>
+                    <div class="info">- Autor: Y</div>
+                </div>
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 3</div>
+                    <div class="info">- Autor: Z</div>
+                </div>
+                <div class="mini-card" onclick="abrirConfirmacao()">
+                    <div class="foto">Livro 4</div>
+                    <div class="info">- Autor: W</div>
+                </div>
+            </div>
         </div>
-        <button class="fechar" onclick="fecharPopup()">Fechar</button>
+        <button class="fechar" onclick="fecharPopup()">Fechar</button> -->
     </div>
 
     <div class="overlay" id="overlay" onclick="fecharConfirmacao()"></div>
@@ -382,11 +387,55 @@
         <button onclick="fecharConfirmacao()">Cancelar</button>
     </div>
 
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>   
     <script>
-        function abrirPopup() {
-            document.getElementById("popup").classList.add("active");
-            document.getElementById("overlay").classList.add("active");
+        function deleteBook(bookId) {
+            Swal.fire({
+                title: "Tem certeza?",
+                text: "Você está deletando uma possibilidade. Tem certeza de que não é a certa?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Sim, deletar!",
+                cancelButtonText: "Cancelar!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    fetch("/books/delete", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        credentials: "include",
+                        body: JSON.stringify({ id: bookId })
+
+                    }).then(async res => {
+                        const data = await res.json();
+
+                        if (!res.ok) {
+                            throw new Error(data.error || "Erro desconhecido");
+                        }                        
+
+                        Swal.fire({
+                            title: "Deletado!",
+                            text: data.message,
+                            icon: "success"
+                        }).then(() => {
+                            window.location.reload();
+                        });
+
+                    }).catch(err => {
+                        Swal.fire({
+                            title: "Erro!",
+                            text: err.message,
+                            icon: "error"
+                        });
+                    });
+                }
+            })
         }
+
         function fecharPopup() {
             document.getElementById("popup").classList.remove("active");
             document.getElementById("overlay").classList.remove("active");

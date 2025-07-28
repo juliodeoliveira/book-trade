@@ -91,13 +91,128 @@
                 padding: 24px;
             }
         }
+
+         /* menu aborgue */
+         /* Ícone hambúrguer fixo no canto superior esquerdo */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            z-index: 1001; /* acima do menu */
+        }
+
+        .menu-btn .bar {
+            height: 4px;
+            width: 100%;
+            background-color: #333;
+            border-radius: 2px;
+            transition: all 0.4s ease;
+            transform-origin: left center;
+            transform: translateZ(0);
+        }
+
+        /* Animação para transformar o hambúrguer em X */
+        .menu-btn.open .bar:nth-child(1) {
+            transform: translate(1px, 1px) rotate(40deg);
+        }
+
+        .menu-btn.open .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-btn.open .bar:nth-child(3) {
+            transform: translate(1px, -1px) rotate(-40deg);
+        }
+
+        /* Sidebar lateral, inicialmente escondido à esquerda */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -250px; /* escondido fora da tela */
+            width: 250px;
+            height: 100vh;
+            background-color: #222;
+            padding-top: 60px;
+            transition: right 0.4s ease;
+            z-index: 1000;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            margin: 20px 0;
+            margin-right: 30px;
+            text-align: center;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            transition: color 0.3s ease;
+        }
+
+        ul li a.actual-page {
+            color: #ff9800;
+        }
+
+        .sidebar ul li a:hover {
+            color: #ff9800;
+        }
+
+        /* Quando o menu estiver aberto, desloca sidebar para a tela */
+        .sidebar.active {
+            right: 0;
+        }
+
+        .logged-user {
+            color: white;
+            text-align: center;
+            margin-right: 30px;
+        }
     </style>
 </head>
 <body>
+
+    <!-- Ícone do menu hambúrguer fixo -->
+    <div id="menu-btn" class="menu-btn">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+    </div>
+
+    <nav id="sidebar" class="sidebar">
+    <ul>
+        <p class="logged-user">User: {{.loggedUser}}</p>
+        <li><a href="/">Início</a></li>
+        
+        <!-- TODO: Adicionar aqui o nome do usuário que está logado -->
+
+        {{if .isAuthenticated}}
+            <form id="logout-form" action="/user/logout" method="POST" style="display: none;"></form>
+            <li><a href="/books/my-books">Meus livros</a></li>
+            <li><a class="actual-page" href="">Envie um livro</a></li>
+            <li><a href="#" onclick="document.getElementById('logout-form').submit()">Logout</a></li>
+        {{else}}
+            <li><a href="/user/login">Login</a></li>
+            <li><a href="/user/register">Cadastro</a></li>
+        {{end}}
+    </ul>
+    </nav>
+
     <div class="container">
         <h1>Envie um livro</h1>
 
         <!-- TODO: Precisa de uma api de livros para facilitar o preenchimento dos formulários -->
+        <!-- TODO: Adicionar aviso que as imagens sao hospedadas no imgur -->
         <form action="/books/send" method="post" enctype="multipart/form-data">
             <div>
                 <label for="bookName">Nome do livro:</label>
@@ -136,6 +251,14 @@
     <script>
         const bookYear = document.getElementById("bookYear");
         bookYear.max = new Date().getFullYear();
+
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            menuBtn.classList.toggle('open');
+        });
     </script>
 </body>
 </html>

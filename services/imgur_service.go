@@ -9,7 +9,7 @@ import (
 	"book-trade/config"
 )
 
-func UploadToImgur(base64Image string) (string, error) {
+func UploadToImgur(base64Image string) (link string, deleteHash string, err error) {
 	clientID := config.GetEnv("IMGUR_CLIENT_ID", "");
 
 	url := "https://api.imgur.com/3/image"
@@ -21,7 +21,7 @@ func UploadToImgur(base64Image string) (string, error) {
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 
 	req.Header.Set("Authorization", "Client-ID " + clientID)
@@ -30,7 +30,7 @@ func UploadToImgur(base64Image string) (string, error) {
 	client := &http.Client{}
 	response, err := client.Do(req)
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
 	defer response.Body.Close()
 
@@ -39,11 +39,44 @@ func UploadToImgur(base64Image string) (string, error) {
 	var result map[string]interface{}
 	json.Unmarshal(body, &result)
 	if !result["success"].(bool) {
-		return "", fmt.Errorf("Erro ao enviar mensagem: %v", result)
+		return "", "", fmt.Errorf("Erro ao enviar mensagem: %v", result)
 	}
 
 	dataResult := result["data"].(map[string]interface{})
-	link := dataResult["link"].(string)
+	link = dataResult["link"].(string)
+	deleteHash = dataResult["deletehash"].(string)
 
-	return link, nil
+	return deleteHash, link, nil
+}
+
+func DeleteFromImgur(deleteHash string) error {
+	clientID := config.GetEnv("IMGUR_CLIENT_ID", "")
+	url := fmt.Sprintf("https://api.imgur.com/3/image/%s", deleteHash)
+
+	req, err := http.NewRequest("DELETE", url, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Set("Authorization", "Client-ID "+clientID)
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+
+	var result map[string]interface{}
+	if err := json.Unmarshal(body, &result); err != nil {
+		return err
+	}
+
+	if !result["success"].(bool) {
+		return fmt.Errorf("Erro ao deletar imagem do Imgur: %v", result)
+	}
+
+	return nil
 }
