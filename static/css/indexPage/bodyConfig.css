@@ -1,0 +1,8 @@
+/* body config */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #E5D2B4;
+    overflow-y: auto;
+    font-family: sans-serif;
+}
