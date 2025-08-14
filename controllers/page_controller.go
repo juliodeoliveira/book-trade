@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"book-trade/middleware"
+	"book-trade/models"
 	"book-trade/repositories"
+	"book-trade/utils"
 	"encoding/json"
 	"html/template"
 	"log"
@@ -12,23 +14,52 @@ import (
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	books, err := GetBooks(w, r)
+
 	if (err != err) {
 		http.Error(w, "Erro ao buscar os livros ", http.StatusInternalServerError)
 		return
 	}
 
 	var username string
+	var userBooks []models.BookView
 	user, err := middleware.GetUserFromToken(r)
 	if err == nil {
 		username, _ = repositories.GetUsername(user.UserID)	
+		userBooks = GetUserBooks(user.UserID)
 	} else {
 		username = "Convidado"
+		userBooks = []models.BookView{}
 	}
 
+	// TODO: Proxima funcionalidade é entrar em contato para trocar
+
+	filteredBooks := utils.SubtractBooks(books, userBooks)
+
+	CSSFiles := utils.BuildStaticURLs([]string {
+		"/static/css/indexPage/bodyConfig.css",
+		"/static/css/indexPage/mainCards.css",
+		"/static/css/indexPage/tradingPopup.css", 
+		"/static/css/indexPage/mainLogo.css",
+		"/static/css/indexPage/hamburguerMenu.css",
+		"/static/css/indexPage/warning.css",
+	})
+
+	JSFiles := utils.BuildStaticURLs([]string {
+		"/static/js/tradeConfirmation.js",
+		"/static/js/tradePopup.js",
+		"/static/js/sidebar.js",
+		"/static/js/scrollRevealConfig.js",
+	})
+
 	data := map[string]interface{}{
-		"books": books,
+		"CSSFiles": CSSFiles,
+		"JSFiles": JSFiles,
+		"logoPath": utils.BuildSingleStaticURL("/static/no-background.png"),
+
+		"books": filteredBooks,
 		"isAuthenticated": username != "Convidado",
 		"loggedUser": username,
+		"userBooks" : userBooks,
 	}
 	
 	render(w, "views/index.html", data)
@@ -43,7 +74,13 @@ func AddBookPage(w http.ResponseWriter, r *http.Request) {
 		username = "Convidado"
 	}
 
+	CSSFiles := utils.BuildStaticURLs([]string{
+		"/static/css/sendBookPage/bodyConfig.css",
+		"/static/css/sendBookPage/formConfig.css",
+	})
+
 	data := map[string]interface{}{
+		"CSSFiles": CSSFiles,
 		"isAuthenticated": username != "Convidado",
 		"loggedUser": username,
 	}
@@ -61,7 +98,24 @@ func UserBooksPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	CSSFiles := utils.BuildStaticURLs([]string {
+		"/static/css/indexPage/bodyConfig.css",
+		"/static/css/indexPage/mainCards.css",
+		"/static/css/indexPage/tradingPopup.css", 
+		"/static/css/indexPage/hamburguerMenu.css",
+		"/static/css/indexPage/warning.css",
+	})
+
+	JSFiles := utils.BuildStaticURLs([]string{
+		"/static/js/deleteBookConfirmation.js",
+		"/static/js/sidebar.js",
+		"/static/js/scrollRevealConfig.js",
+	})
+
 	data := map[string]interface{}{
+		"CSSFiles": CSSFiles,
+		"JSFiles": JSFiles,
+
 		"userBooks": userBooks,
 		"isAuthenticated": username != "Convidado",
 		"loggedUser": username,
@@ -85,7 +139,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	CSSFiles := utils.BuildStaticURLs([]string{
+		"/static/css/sendBookPage/bodyConfig.css",
+		"/static/css/sendBookPage/formConfig.css",
+	})
+
 	data := map[string]interface{}{
+		"CSSFiles": CSSFiles,
+
 		"Errors": errorMessage,
 	}
 
@@ -107,7 +168,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
+	CSSFiles := utils.BuildStaticURLs([]string{
+		"/static/css/sendBookPage/bodyConfig.css",
+		"/static/css/sendBookPage/formConfig.css",
+	})
+
 	data := map[string]interface{}{
+		"CSSFiles": CSSFiles,
+
 		"Errors": errorMessages,
 	}
 
@@ -123,4 +191,5 @@ func render(w http.ResponseWriter, filePath string, data interface{}) {
 
 	templates.Execute(w, data)
 }
+
 
