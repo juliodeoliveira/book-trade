@@ -5,8 +5,8 @@ import (
 	"book-trade/routes"
 	"log"
 	"net/http"
-	"github.com/go-chi/chi/v5"
 
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
@@ -18,6 +18,7 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	router.Handle("/static/*", http.StripPrefix("/static/", fs))
 
-    log.Println("Servidor rodando em http://localhost:8080")
-    http.ListenAndServe(":8080", router)
+	serverAddress := config.GetEnv("SERVER_ADDRESS", "")
+    log.Printf("Servidor rodando em http://%s \n", serverAddress)
+    http.ListenAndServe(serverAddress, router)
 }
