@@ -1,0 +1,10 @@
+/* main logo */
+.big-logo {
+    display: flex;
+    justify-content: center; /* Centraliza na vertical */
+    width: 100vw;
+    height: 300px; 
+}
+.big-logo > img {
+    max-height: 200%;
+}

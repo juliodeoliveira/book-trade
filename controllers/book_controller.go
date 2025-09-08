@@ -16,19 +16,9 @@ import (
 	"strings"
 )
 
-type BookView struct {
-	Id        int
-	Name      string
-	Author    string
-	Publisher string
-	Volume    string
-	Year      string
-	ImageUrl  string
-}
+func convertBookToView(book models.Book) models.BookView {
 
-func convertBookToView(book models.Book) BookView {
-
-    return BookView{
+    return models.BookView{
         Id:        book.Id,
         Name:      book.Name,
         Author:    book.Author,
@@ -40,14 +30,14 @@ func convertBookToView(book models.Book) BookView {
 
 }
 
-func GetBooks(w http.ResponseWriter, r *http.Request) ([]BookView, error) {
+func GetBooks(w http.ResponseWriter, r *http.Request) ([]models.BookView, error) {
     books, err := repositories.GetAll()
 	
 	if err != nil {
 		return nil, fmt.Errorf("erro ao buscar os livros %v", http.StatusInternalServerError)
 	}
 
-	var booksView []BookView
+	var booksView []models.BookView
 	for _, book := range books{
 		booksView = append(booksView, convertBookToView(book))
 	}
@@ -141,11 +131,11 @@ func parseBookForm(r *http.Request, imgurUrl string) models.Book {
 	}
 }
 
-func GetUserBooks(userId int) []BookView {
+func GetUserBooks(userId int) []models.BookView {
 	
 	books, _ := repositories.GetBooksByUserId(userId)
 
-	var booksView []BookView
+	var booksView []models.BookView
 	for _, book := range books{
 		booksView = append(booksView, convertBookToView(book))
 	}
@@ -212,4 +202,3 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "E, tal como Ícaro, ele voou alto demais e... deletou-se."})
 }
-

@@ -49,6 +49,7 @@ func CreateUser(user models.User) {
 		return
 	}
 
+	//TODO: se der errado ele tem que validar e nao deixar ir para a pagina de login
 
 	verifyQuery := `
 		INSERT INTO email_verifications (user_id, token, expiration, verified)
@@ -60,8 +61,9 @@ func CreateUser(user models.User) {
 		return
 	}
 
+	verifyUserUrl := utils.BuildSingleStaticURL("/user/verify?token="+token)
 	// Isso na verdade vai ser enviado para o email que o usuario colocou no formulario
-	fmt.Println("http://localhost:8080/user/verify?token="+token)
+	fmt.Println(verifyUserUrl)
 }
 
 func CheckEmail(email string) (bool, error) {
@@ -90,7 +92,13 @@ func VerifyToken(token string) {
 		return
 	}
 
-	updateVerification := `UPDATE email_verifications SET verified = true WHERE user_id = $1`
+	updateVerification := `
+		UPDATE email_verifications 
+		SET verified = true 
+		WHERE user_id = $1 
+			AND token = $2
+	`
+
 	_, err = config.DB.Exec(updateVerification, userId)
 	if err != nil {
 		log.Println("Token inválido ", err)
