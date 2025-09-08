@@ -67,7 +67,13 @@
                         <p title="Volume do livro">&#x1F4D9; - Volume (se for um box): {{.Volume}}</p>
                         <p title="Ano de lançamento">&#x1F4D3; - Ano de lançamento: {{.Year}}</p>
                     </div>
-                    <button class="trocar" data-book-id="{{.Id}}" onclick="openPopup(this)">Trocar</button>
+                    <button 
+                        class="trocar" 
+                        data-book-id="{{.Id}}" 
+                        data-others-book-name="{{.Name}}" 
+                        onclick="openPopup(this)">
+                        Trocar
+                    </button>
                 </div>
             {{end}}
             <!-- <img src="https://i.imgur.com/wZCr3fC.jpeg" alt="gato safado achando que é empresário"> -->
@@ -82,7 +88,7 @@
             {{if .isAuthenticated}}
                 <div class="mini-cards">
                     {{range .userBooks}}
-                        <div class="mini-card" data-book-id="{{.Id}}" onclick="openConfirmation(this)">
+                        <div class="mini-card" data-book-id="{{.Id}}" data-your-book-name="{{.Name}}" onclick="openConfirmation(this)">
                             <div class="foto">
                                 <img class="mini-photo" src="{{.ImageUrl}}" alt="{{.Name}}">
                             </div>
@@ -107,6 +113,8 @@
         <button onclick="closeConfirmation()">Confirmar</button>
         <button onclick="closeConfirmation()">Cancelar</button>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>  
 
     {{range .JSFiles}}
         <script src="{{.}}"></script>

@@ -3,8 +3,10 @@ package utils
 import "book-trade/config"
 
 //* Tip: same path as writen in html is used in this parameter, just type there and paste here
+//! Only for internal assets
 func BuildStaticURLs(files []string) []string {
     serverAddress := config.GetEnv("SERVER_ADDRESS", "")
+
     baseURL := "http://" + serverAddress
 
     fullURLs := make([]string, len(files))

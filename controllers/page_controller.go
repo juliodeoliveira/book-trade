@@ -45,7 +45,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	})
 
 	JSFiles := utils.BuildStaticURLs([]string {
-		"/static/js/tradeConfirmation.js",
 		"/static/js/tradePopup.js",
 		"/static/js/sidebar.js",
 		"/static/js/scrollRevealConfig.js",
